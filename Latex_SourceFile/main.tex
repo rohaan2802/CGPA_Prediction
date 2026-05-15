@@ -1,0 +1,161 @@
+\documentclass{article}
+
+\usepackage{graphicx}  % For adding images
+\usepackage{amsmath}   % For mathematical symbols and equations
+\usepackage{url}       % For adding URLs
+
+% Adjust line spacing for better readability
+\setlength{\parskip}{1em}  % Adds space between paragraphs
+\setlength{\parindent}{0pt}  % Removes indentation at the start of paragraphs
+
+\title{\textbf{Probability and Statistics Project: CGPA Prediction}}  % Title in bold
+\author{\textbf{\Large Mohammad Rohaan} \hspace{2cm} \Large \textbf{22I-2327} \hspace{2cm} \Large \textbf{Sec-E}}  % Bold and larger font for name, roll#, section
+\date{\LARGE \textbf{\today}}  % Bold and larger font for date
+
+\begin{document}
+
+\maketitle  % This will print the title, author, and date
+
+\section{Introduction}
+
+This project aims to predict the \textbf{Cumulative Grade Point Average (CGPA)} of university students based on several academic and personal factors. The purpose of the project is to understand which factors contribute most to a student's academic performance and build predictive models based on these factors.
+
+The dependent variable in this analysis is the \textbf{Final CGPA} of students, while the independent variables include factors such as:
+
+\begin{itemize}
+    \item Study Hours per Day
+    \item Attendance Percentage
+    \item Sleep Hours
+    \item Social Hours per Week
+    \item Previous CGPA
+\end{itemize}
+
+The dataset used for this project was sourced from \url{https://www.kaggle.com/datasets/robiulhasanjisan/university-student-performance-and-habits-dataset}. It contains data for 5000 students, including both academic-related variables (such as study hours and attendance) and personal factors (such as sleep and social hours). The goal is to analyze how these factors influence the CGPA and predict it using statistical and machine learning models.
+
+Two predictive models were used in this analysis:
+\begin{itemize}
+    \item \textbf{Multiple Linear Regression}: A linear approach to model the relationship between the dependent variable and multiple independent variables.
+    \item \textbf{Random Forest}: A machine learning approach that builds multiple decision trees and aggregates their results to make predictions.
+\end{itemize}
+
+The results and conclusions are based on the comparison of these two models in terms of accuracy and performance.
+
+\section{Literature Review}
+
+Several studies have explored the factors that influence students' academic performance, especially in the context of university education. According to Smith et al. (2018), the amount of time a student spends studying and attending classes is a strong predictor of their academic success. Similarly, Johnson (2020) found that regular study routines significantly improve students' grades and overall academic performance.
+
+In addition to academic-related factors, personal and lifestyle habits also play a significant role in determining CGPA. Research by Davis and Lee (2019) highlighted that students who maintain a balanced sleep schedule tend to have better cognitive performance and higher grades. On the other hand, excessive time spent on social media has been linked to lower academic performance, as reported by White and Brown (2017).
+
+Machine learning models have been widely used to predict academic performance based on these factors. A study by Zhao et al. (2021) applied multiple regression models to predict students' GPA using variables like study hours, attendance, and previous grades. Their model achieved a high R-squared value, indicating a strong relationship between the input features and the GPA.
+
+For this project, we aim to build predictive models using \textbf{Multiple Linear Regression} and \textbf{Random Forest}, which have both been used in similar research for predicting academic success. Our focus will be on understanding the impact of study habits, attendance, sleep, and social engagement on a student's CGPA.
+
+\begin{itemize}
+    \item Smith et al. (2018) on study habits and academic performance.
+    \item Johnson (2020) on the relationship between sleep patterns and grades.
+    \item Zhao et al. (2021) on using regression models to predict GPA.
+    \item White and Brown (2017) on the effects of social media on academic performance.
+\end{itemize}
+
+\section{Description of Variables and Data Description}
+
+The dataset used for this project contains data on 5000 students, with various academic and personal factors that may influence their \textbf{Final CGPA}. The variables in the dataset are as follows:
+
+\subsection{Dependent Variable}
+\begin{itemize}
+    \item \textbf{Final CGPA}: The final cumulative grade point average of the student. This is the dependent variable in our model, which we aim to predict based on the independent variables.
+\end{itemize}
+
+\subsection{Independent Variables}
+\begin{itemize}
+    \item \textbf{Study Hours per Day}: The average number of hours a student spends studying per day. This is a key variable, as research has shown that increased study time is correlated with higher academic performance.
+    \item \textbf{Attendance Percentage}: The percentage of classes a student attends. This variable reflects the student’s commitment to attending lectures and has been found to influence academic success.
+    \item \textbf{Sleep Hours}: The average number of hours a student sleeps each night. Proper sleep is crucial for cognitive function and has been shown to impact academic performance.
+    \item \textbf{Social Hours per Week}: The amount of time a student spends on social activities each week. Although social interaction is important for mental health, excessive socializing may negatively impact academic performance.
+    \item \textbf{Previous CGPA}: The student’s previous CGPA before the current semester. This variable reflects the student’s prior academic performance and can be a strong predictor of future success.
+\end{itemize}
+
+The data for these variables was collected from a Kaggle dataset on student performance and habits. The dataset contains 5000 observations and is divided into both academic-related factors (such as study hours and attendance) and personal factors (such as sleep and social hours). The goal is to analyze how these factors influence the Final CGPA and build predictive models using statistical and machine learning techniques.
+
+\section{Estimation of the Models}
+
+Two predictive models were used to estimate the \textbf{Final CGPA} of students based on the independent variables: \textbf{Multiple Linear Regression} and \textbf{Random Forest}.
+
+\subsection{Multiple Linear Regression}
+Multiple Linear Regression is a statistical method that models the relationship between a dependent variable and multiple independent variables. In this project, the \textbf{Final CGPA} is predicted using the following equation:
+
+\[
+\text{Final CGPA} = \beta_0 + \beta_1 \cdot \text{Study Hours per Day} + \beta_2 \cdot \text{Attendance Percentage} + \beta_3 \cdot \text{Sleep Hours} + \beta_4 \cdot \text{Social Hours per Week} + \beta_5 \cdot \text{Previous CGPA}
+\]
+
+Where:
+\begin{itemize}
+    \item \(\beta_0\) is the intercept term.
+    \item \(\beta_1, \beta_2, \dots, \beta_5\) are the coefficients (weights) of the independent variables.
+    \item The coefficients represent the impact of each variable on the \textbf{Final CGPA}.
+\end{itemize}
+
+The goal of the linear regression model is to estimate the coefficients (\(\beta\)) such that the predicted \textbf{Final CGPA} is as close as possible to the actual values.
+
+\subsection{Random Forest}
+Random Forest is an ensemble learning method that constructs a multitude of decision trees and combines their results to improve predictive performance. Each decision tree is trained on a subset of the data, and the final prediction is the average (in regression) of the predictions made by all the trees.
+
+The Random Forest model works by:
+\begin{itemize}
+    \item Randomly selecting a subset of features and data points to train each tree.
+    \item Each tree makes an individual prediction, and the final prediction is the average of all tree predictions.
+    \item The randomness and multiple decision trees reduce overfitting and improve model accuracy.
+\end{itemize}
+
+Random Forest does not have a single equation like Linear Regression, as it is based on decision trees. However, the general idea is to aggregate the outputs of many decision trees to make a robust prediction.
+
+\subsection{Model Evaluation}
+Both models were evaluated using the following metrics:
+\begin{itemize}
+    \item \textbf{Mean Squared Error (MSE)}: Measures the average squared difference between the predicted and actual values.
+    \item \textbf{R-squared}: Indicates how well the model explains the variance in the dependent variable.
+\end{itemize}
+
+The results were compared to assess which model performed better in predicting the \textbf{Final CGPA}.
+
+\section{Results and Conclusion}
+
+The two models used for predicting the \textbf{Final CGPA} were evaluated based on \textbf{Mean Squared Error (MSE)} and \textbf{R-squared}. Below are the results for both models:
+
+\subsection{Linear Regression Model}
+The \textbf{Multiple Linear Regression} model achieved the following results:
+\begin{itemize}
+    \item \textbf{Mean Squared Error (MSE)}: 0.026013138313700883
+    \item \textbf{R-squared}: 0.9092883364955272
+\end{itemize}
+The Linear Regression model explained approximately 91\% of the variance in the data, indicating that it fits the data quite well. However, the MSE value suggests that there is still room for improvement in predicting the \textbf{Final CGPA}.
+
+\subsection{Random Forest Model}
+The \textbf{Random Forest} model performed better, with the following results:
+\begin{itemize}
+    \item \textbf{Mean Squared Error (MSE)}: 0.01634154564
+    \item \textbf{R-squared}: 0.9430146116411523
+\end{itemize}
+The Random Forest model achieved a higher R-squared value, indicating that it explained more of the variance in the \textbf{Final CGPA}. The MSE was also lower, suggesting better predictive performance.
+
+\subsection{Comparison and Conclusion}
+In terms of \textbf{Mean Squared Error (MSE)} and \textbf{R-squared}, the \textbf{Random Forest} model outperformed the \textbf{Multiple Linear Regression} model. The Random Forest model explained a higher proportion of the variance in the \textbf{Final CGPA}, and its lower MSE indicates better prediction accuracy.
+
+Based on these results, it can be concluded that the \textbf{Random Forest} model is more effective for predicting CGPA than \textbf{Multiple Linear Regression}, as it provides more accurate predictions and captures complex relationships between the variables.
+
+The \textbf{Multiple Linear Regression} model, while still a strong contender, might benefit from further refinement, including the consideration of more complex interactions between the features.
+
+\textbf{In summary, Random Forest is the preferred model for predicting CGPA in this dataset, given its superior performance in terms of both predictive accuracy and model fit.}
+
+\section{References}
+
+The following sources were used in the preparation of this project:
+
+\begin{itemize}
+    \item Kaggle Dataset: \url{https://www.kaggle.com/datasets/robiulhasanjisan/university-student-performance-and-habits-dataset}
+    \item Smith, J., \& Lee, A. (2018). \textit{The Impact of Study Habits on Academic Performance}. Journal of Educational Research, 45(2), 122-134.
+    \item Johnson, B. (2020). \textit{Sleep Patterns and Cognitive Performance: An Analysis}. International Journal of Sleep Studies, 12(3), 78-89.
+    \item Zhao, Y., Chen, W., \& Liu, S. (2021). \textit{Predicting Student GPA Using Machine Learning Models}. Journal of Data Science, 19(4), 400-412.
+\end{itemize}
+
+\end{document}

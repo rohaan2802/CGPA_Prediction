@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CGPA Prediction — Study Habits and Prior Grades | Mohammad Rohaan</title>
+<meta name="description" content="Two models that predict a student's final CGPA from study hours, attendance, sleep, social hours and previous CGPA. On a 1,000-row test set the random forest reaches R² 0.9431. Mohammad Rohaan, 22I-2327.">
+<meta name="author" content="Mohammad Rohaan">
+<meta name="theme-color" content="#121416">
+<link rel="canonical" href="https://rohaan2802.github.io/CGPA_Prediction/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="CGPA Prediction — Study Habits and Prior Grades">
+<meta property="og:description" content="Two models that predict final CGPA from study habits and previous CGPA. Test R² for the random forest is 0.9431.">
+<meta property="og:url" content="https://rohaan2802.github.io/CGPA_Prediction/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script>(function(){try{var t=localStorage.getItem('cgpa-theme');var q=new URLSearchParams(location.search).get('theme');if(q==='dark'||q==='light')t=q;if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top" aria-label="CGPA Prediction home"><span class="brand-logo">CG</span><span>CGPA Prediction</span></a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#links">Links</a></li>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#inside">Inside</a></li>
+      <li><a href="#data">Data</a></li>
+      <li><a href="#models">Models</a></li>
+      <li><a href="#results">Results</a></li>
+      <li><a href="#files">Files</a></li>
+      <li><a href="#gallery">Screenshots</a></li>
+      <li><a href="#structure">Structure</a></li>
+      <li><a href="#run">How to run</a></li>
+      <li><a href="#license">License</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="icon-btn menu-btn" id="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+      <button class="icon-btn theme-btn" id="theme-toggle" type="button" aria-label="Toggle theme">
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<div class="hero wrap reveal" id="top">
+  <span class="eyebrow">Probability &amp; Statistics · 22I-2327</span>
+  <h1>Predicting final CGPA from study habits and prior grades</h1>
+  <p class="lead">I fitted two models that predict a student’s final CGPA from study hours, attendance, sleep, social hours and previous CGPA. On a 1,000-row test set the random forest comes out ahead, with R² 0.9431. A re-run of the linear model matches the original notebook exactly.</p>
+  <div class="badges">
+    <img src="https://img.shields.io/badge/Python-3-3776AB?style=for-the-badge&amp;logo=python&amp;logoColor=white" alt="Python 3" width="110" height="28">
+    <img src="https://img.shields.io/badge/scikit--learn-LinearRegression%20%2B%20RandomForest-F7931E?style=for-the-badge&amp;logo=scikitlearn&amp;logoColor=white" alt="scikit-learn LinearRegression and RandomForest" width="360" height="28">
+    <img src="https://img.shields.io/badge/Jupyter-Notebook-F37626?style=for-the-badge&amp;logo=jupyter&amp;logoColor=white" alt="Jupyter Notebook" width="178" height="28">
+    <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License: MIT" width="104" height="28">
+  </div>
+  <div class="cta">
+    <a class="btn btn-primary" href="https://github.com/rohaan2802/CGPA_Prediction">Open the repository</a>
+    <a class="btn btn-ghost" href="https://github.com/rohaan2802/CGPA_Prediction/archive/refs/heads/main.zip">Download ZIP</a>
+    <a class="btn btn-ghost" href="#gallery">View screenshots</a>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>5,000</b><span>Students in the table</span></div>
+    <div class="stat"><b>2</b><span>Models, same 4,000 / 1,000 split</span></div>
+    <div class="stat"><b>0.9093</b><span>Test R², linear regression</span></div>
+    <div class="stat"><b>0.9431</b><span>Test R², random forest</span></div>
+  </div>
+</div>
+
+<section id="links" class="wrap reveal">
+  <h2>Live Links</h2>
+  <p class="sub">The repository, this page, and a ZIP of the current main branch.</p>
+  <div class="table-wrap">
+    <table class="links-table">
+      <thead><tr><th>What</th><th>Link</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Repository</th><td><a href="https://github.com/rohaan2802/CGPA_Prediction">https://github.com/rohaan2802/CGPA_Prediction</a></td></tr>
+        <tr><th scope="row">Website</th><td><a href="https://rohaan2802.github.io/CGPA_Prediction/">https://rohaan2802.github.io/CGPA_Prediction/</a></td></tr>
+        <tr><th scope="row">Download ZIP</th><td><a href="https://github.com/rohaan2802/CGPA_Prediction/archive/refs/heads/main.zip">https://github.com/rohaan2802/CGPA_Prediction/archive/refs/heads/main.zip</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="overview" class="wrap reveal">
+  <h2>Overview</h2>
+  <p class="sub">A Probability &amp; Statistics project: predict final CGPA from five academic and lifestyle numbers, and compare a linear model with a random forest.</p>
+  <p>I fitted two models on the same 4,000 / 1,000 split (<code>test_size=0.2</code>, <code>random_state=42</code>). The predictors are study hours per day, attendance, sleep, social hours in the week, and previous CGPA. The linear model is ordinary least squares:</p>
+  <div class="code-wrap">
+    <button class="copy" type="button">Copy</button>
+    <pre class="code"><code>Final_CGPA = b0 + b1*Study_Hours_Per_Day + b2*Attendance_Pct + b3*Sleep_Hours + b4*Social_Hours_Week + b5*Previous_CGPA</code></pre>
+  </div>
+  <p>The linear fit is a <code>sklearn.<wbr>linear_model.<wbr>LinearRegression</code> (intercept on, no scaling). The second model is a <code>sklearn.<wbr>ensemble.<wbr>RandomForestRegressor</code> with 100 trees and <code>random_state=42</code>. Gender, age and major are in the table and I summarised them, but they are not inputs to either model.</p>
+  <p>I re-ran the work from <a href="src/predict_cgpa.py">src/<wbr>predict_cgpa.py</a>. Linear regression matched the original notebook exactly: test MSE 0.02601314, R² 0.90928834. The forest is ahead — MSE 0.01632421, R² 0.94307506 — close to the notebook’s 0.01634155 and 0.94301461. Previous CGPA does most of the work. The numbers from that run are under <a href="results/">results/</a>.</p>
+</section>
+
+<section id="inside" class="wrap reveal">
+  <h2>What's Inside</h2>
+  <p class="sub">The notebook, the runnable script, the 5,000-row table, the result files, and this website.</p>
+  <div class="grid">
+    <div class="card"><span class="tag">Notebook</span><h3>cgpa_<wbr>prediction.ipynb</h3><p>The cleaned walkthrough: load the table, print statistics, correlations and outliers, fit both models, and plot the charts.</p></div>
+    <div class="card"><span class="tag">Script</span><h3>src/<wbr>predict_cgpa.py</h3><p>The same two fits, runnable from the command line. It prints the report and writes the files under results/.</p></div>
+    <div class="card"><span class="tag">Data</span><h3>data/<wbr>Student_data.csv</h3><p>5,000 rows, ten columns, no missing cells. The table is included in the repository. Source notes are in data/<wbr>README.md.</p></div>
+    <div class="card"><span class="tag">Results</span><h3>results/</h3><p>metrics.csv, coefficients, feature importances, predictions_head.csv, and the figures from a fresh run.</p></div>
+    <div class="card"><span class="tag">Screenshots</span><h3>screenshots/</h3><p>24 images, all 1600×1000, covering the data, the fits, the charts and this website.</p></div>
+    <div class="card"><span class="tag">Website</span><h3>index.html</h3><p>This page. Charcoal and mandarin, with a dark theme and a light theme, built to be read on a phone as well as a desktop.</p></div>
+  </div>
+</section>
+
+<section id="data" class="wrap reveal">
+  <h2>The Data</h2>
+  <p class="sub">5,000 university students, ten columns, no missing cells, every Student_ID unique. The two models use five of those columns as predictors and Final_CGPA as the target.</p>
+  <h3>Columns</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Column</th><th>Role</th><th>What I actually saw</th></tr></thead>
+      <tbody>
+        <tr><td><code>Student_ID</code></td><td>Identifier</td><td>5,000 distinct values</td></tr>
+        <tr><td><code>Gender</code></td><td>Collected, not used in the models</td><td>Male 2,748; Female 2,252</td></tr>
+        <tr><td><code>Age</code></td><td>Collected, not used in the models</td><td>18–24, mean 20.95</td></tr>
+        <tr><td><code>Major</code></td><td>Collected, not used in the models</td><td>Six majors; Psychology is the most common (869)</td></tr>
+        <tr><td><code>Attendance_Pct</code></td><td>Predictor</td><td>26.2 to 100, mean 83.80. Mode is 100 (779 students)</td></tr>
+        <tr><td><code>Study_Hours_Per_Day</code></td><td>Predictor</td><td>0.1 to 14, mean 4.52</td></tr>
+        <tr><td><code>Previous_CGPA</code></td><td>Predictor</td><td>1.35 to 4.00, mean 3.09</td></tr>
+        <tr><td><code>Sleep_Hours</code></td><td>Predictor</td><td>4.0 to 10.0, mean 7.01</td></tr>
+        <tr><td><code>Social_Hours_Week</code></td><td>Predictor</td><td>0 to 20, mean 8.01. Mode is 8 (722 students)</td></tr>
+        <tr><td><code>Final_CGPA</code></td><td>Target</td><td>1.16 to 4.00, mean 3.27. Mode is 4.00 (510 students)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3>Summary of the numeric columns</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Column</th><th>Mean</th><th>Std</th><th>Min</th><th>Median</th><th>Max</th><th>Mode (count)</th></tr></thead>
+      <tbody>
+        <tr><td>Age</td><td>20.9486</td><td>2.0174</td><td>18</td><td>21</td><td>24</td><td>19 (765)</td></tr>
+        <tr><td>Attendance_Pct</td><td>83.7957</td><td>12.8679</td><td>26.2</td><td>85.05</td><td>100</td><td>100 (779)</td></tr>
+        <tr><td>Study_Hours_Per_Day</td><td>4.5178</td><td>2.5681</td><td>0.1</td><td>4.0</td><td>14</td><td>2.9 (108)</td></tr>
+        <tr><td>Previous_CGPA</td><td>3.0938</td><td>0.4768</td><td>1.35</td><td>3.10</td><td>4.00</td><td>4.00 (172)</td></tr>
+        <tr><td>Sleep_Hours</td><td>7.0121</td><td>1.4244</td><td>4.0</td><td>7.0</td><td>10.0</td><td>7.4 (153)</td></tr>
+        <tr><td>Social_Hours_Week</td><td>8.0064</td><td>2.7978</td><td>0</td><td>8</td><td>20</td><td>8 (722)</td></tr>
+        <tr><td>Final_CGPA</td><td>3.2722</td><td>0.5080</td><td>1.16</td><td>3.31</td><td>4.00</td><td>4.00 (510)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Previous CGPA has a Pearson correlation of 0.8789 with the target. Attendance is 0.3028 and study hours 0.2309. Sleep (0.0026), social hours (−0.0049) and age (−0.0122) are essentially uncorrelated with final CGPA. I still left sleep and social hours in the models, because that is how the original notebook was written.</p>
+</section>
+
+<section id="models" class="wrap reveal">
+  <h2>How the Models Are Fitted</h2>
+  <p class="sub">The work is in <a href="src/predict_cgpa.py">src/<wbr>predict_cgpa.py</a> and in the notebook. The steps are the same in both.</p>
+  <div class="grid">
+    <div class="card"><span class="tag">1</span><h3>Load the table</h3><p>Read data/<wbr>Student_data.csv. If the file is missing, the script stops and points at data/<wbr>README.md.</p></div>
+    <div class="card"><span class="tag">2</span><h3>Look at the data</h3><p>Print the summary statistics, the Pearson correlations, and the Tukey IQR outlier counts. Outliers stay in the table.</p></div>
+    <div class="card"><span class="tag">3</span><h3>Fit both models</h3><p>Split 4,000 / 1,000 with random_state=42. Fit LinearRegression() and a 100-tree RandomForestRegressor on the same five predictors.</p></div>
+    <div class="card"><span class="tag">4</span><h3>Write the report</h3><p>Print the equation and write results/<wbr>metrics.csv, results/<wbr>coefficients.csv and results/<wbr>predictions_head.csv.</p></div>
+  </div>
+  <p>Neither model standardises the inputs. I did not drop outliers, add interactions, or tune the forest. The point of the exercise is this comparison, on the same split the original notebook used.</p>
+</section>
+
+<section id="results" class="wrap reveal">
+  <h2>Test Results</h2>
+  <p class="sub">Test set, 1,000 rows. Linear regression matches the original notebook exactly. The forest figures are from my re-run; the notebook had MSE 0.01634155 and R² 0.94301461, which is the same conclusion.</p>
+  <h3>Test metrics</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Model</th><th>MSE</th><th>RMSE</th><th>MAE</th><th>R²</th></tr></thead>
+      <tbody>
+        <tr><td>Linear Regression</td><td>0.02601314</td><td>0.16128589</td><td>0.13021230</td><td>0.90928834</td></tr>
+        <tr class="best"><td>Random Forest</td><td>0.01632421</td><td>0.12776624</td><td>0.10311690</td><td>0.94307506</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The forest is ahead on every test metric. On the training set, linear regression is consistent (train R² 0.9022, test 0.9093), while the forest is nearly perfect on the training rows (R² 0.9906) and drops to 0.9431 on the test set. It is over-fitting a bit, but it still wins on held-out data.</p>
+  <h3>Correlations with Final CGPA, and forest importances</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Feature</th><th>corr(Final_CGPA)</th><th>Forest importance</th><th>Linear coefficient</th></tr></thead>
+      <tbody>
+        <tr><td>Previous_CGPA</td><td>0.8789</td><td>0.7961</td><td>0.926166</td></tr>
+        <tr><td>Attendance_Pct</td><td>0.3028</td><td>0.1080</td><td>0.010971</td></tr>
+        <tr><td>Study_Hours_Per_Day</td><td>0.2309</td><td>0.0692</td><td>0.045074</td></tr>
+        <tr><td>Sleep_Hours</td><td>0.0026</td><td>0.0159</td><td>−0.000971</td></tr>
+        <tr><td>Social_Hours_Week</td><td>−0.0049</td><td>0.0108</td><td>−0.003800</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Previous CGPA does most of the work in both models. Sleep and social hours are tiny; given how close their correlations are to zero, I would not treat those signs as a finding. The leftover residuals of the linear model are a fairly tight band around zero — a test RMSE of 0.16 on a CGPA scale of about three points is small, and I do not see a strong curve that would say a straight line is the wrong shape entirely.</p>
+  <h3>Learned equation</h3>
+  <div class="code-wrap">
+    <button class="copy" type="button">Copy</button>
+    <pre class="code"><code>Final_CGPA = -0.678843 + 0.045074×Study_Hours_Per_Day + 0.010971×Attendance_Pct - 0.000971×Sleep_Hours - 0.003800×Social_Hours_Week + 0.926166×Previous_CGPA</code></pre>
+  </div>
+  <p>The raw numbers are in <a href="results/">results/</a>.</p>
+</section>
+
+<section id="files" class="wrap reveal">
+  <h2>Training and Test Files</h2>
+  <p class="sub">The dataset is in this repository. The 4,000 / 1,000 split is made in the script, not stored as a second pair of files.</p>
+  <div class="table-wrap">
+    <table class="links-table">
+      <thead><tr><th>File</th><th>Rows</th><th>Where it lives</th></tr></thead>
+      <tbody>
+        <tr><td><code>Student_data.csv</code></td><td>5,000</td><td><a href="data/Student_data.csv">data/Student_data.csv</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Source, as named in the original notebook and the written report:</p>
+  <div class="table-wrap">
+    <table class="links-table">
+      <thead><tr><th>What</th><th>Link</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Kaggle dataset</th><td><a href="https://www.kaggle.com/datasets/robiulhasanjisan/university-student-performance-and-habits-dataset">https://www.kaggle.com/datasets/robiulhasanjisan/university-student-performance-and-habits-dataset</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>A re-run of <a href="src/predict_cgpa.py">src/<wbr>predict_cgpa.py</a> on this file reproduces the linear-regression test metrics exactly. The written report is <a href="docs/report/CGPA_Prediction_Report.pdf">docs/<wbr>report/<wbr>CGPA_Prediction_<wbr>Report.pdf</a>.</p>
+</section>
+
+<section id="gallery" class="wrap reveal">
+  <h2>Screenshots</h2>
+  <p class="sub">24 images, every one 1600×1000. Click one to open it at full size.</p>
+  <div class="gallery-tools">
+    <label class="search"><input id="search" type="search" placeholder="Search screenshots" aria-label="Search screenshots"></label>
+    <div class="chips">
+      <button class="chip" type="button" data-filter="all" aria-pressed="true">All</button>
+      <button class="chip" type="button" data-filter="setup" aria-pressed="false">Project and data</button>
+      <button class="chip" type="button" data-filter="fit" aria-pressed="false">Fit and numbers</button>
+      <button class="chip" type="button" data-filter="charts" aria-pressed="false">Charts</button>
+      <button class="chip" type="button" data-filter="web" aria-pressed="false">Website</button>
+    </div>
+  </div>
+  <div class="gallery" id="shot-grid">
+    <figure class="shot" data-cat="setup" data-full="screenshots/01-repo-structure.png"><button type="button" aria-label="Enlarge repository structure"><span class="thumb"><img src="screenshots/01-repo-structure.png" width="1600" height="1000" alt="Repository folder structure" loading="lazy" decoding="async"></span></button><figcaption>1. Repository folder structure<span>The script, notebook, data, results and website files.</span></figcaption></figure>
+    <figure class="shot" data-cat="setup" data-full="screenshots/02-problem.png"><button type="button" aria-label="Enlarge the problem"><span class="thumb"><img src="screenshots/02-problem.png" width="1600" height="1000" alt="Predict Final CGPA from five student-habit variables" loading="lazy" decoding="async"></span></button><figcaption>2. The problem<span>Five predictors, one target, two models on the same split.</span></figcaption></figure>
+    <figure class="shot" data-cat="setup" data-full="screenshots/03-data-schema.png"><button type="button" aria-label="Enlarge the data table"><span class="thumb"><img src="screenshots/03-data-schema.png" width="1600" height="1000" alt="Shape, columns and first rows of Student_data.csv" loading="lazy" decoding="async"></span></button><figcaption>3. The data table<span>5,000 rows, ten columns, no missing cells.</span></figcaption></figure>
+    <figure class="shot" data-cat="setup" data-full="screenshots/04-summary-statistics.png"><button type="button" aria-label="Enlarge summary statistics"><span class="thumb"><img src="screenshots/04-summary-statistics.png" width="1600" height="1000" alt="Mean, median, mode and quartiles of the numeric columns" loading="lazy" decoding="async"></span></button><figcaption>4. Summary statistics<span>Mean, median, mode and quartiles for each numeric column.</span></figcaption></figure>
+    <figure class="shot" data-cat="setup" data-full="screenshots/05-correlations.png"><button type="button" aria-label="Enlarge correlations"><span class="thumb"><img src="screenshots/05-correlations.png" width="1600" height="1000" alt="Pearson correlations of the numeric columns with Final CGPA" loading="lazy" decoding="async"></span></button><figcaption>5. Correlations<span>Previous CGPA at 0.8789; sleep and social hours near zero.</span></figcaption></figure>
+    <figure class="shot" data-cat="setup" data-full="screenshots/06-outliers.png"><button type="button" aria-label="Enlarge outlier counts"><span class="thumb"><img src="screenshots/06-outliers.png" width="1600" height="1000" alt="Tukey IQR outlier counts for each numeric column" loading="lazy" decoding="async"></span></button><figcaption>6. Outliers<span>Tukey IQR counts. Study hours has the longest tail (97).</span></figcaption></figure>
+    <figure class="shot" data-cat="charts" data-full="screenshots/07-boxplots.png"><button type="button" aria-label="Enlarge box plots"><span class="thumb"><img src="screenshots/07-boxplots.png" width="1600" height="1000" alt="Box plots of the seven numeric columns, one panel each" loading="lazy" decoding="async"></span></button><figcaption>7. Box plots<span>One panel per numeric column, so the scales stay readable.</span></figcaption></figure>
+    <figure class="shot" data-cat="charts" data-full="screenshots/08-scatter-previous-cgpa.png"><button type="button" aria-label="Enlarge Previous CGPA scatter"><span class="thumb"><img src="screenshots/08-scatter-previous-cgpa.png" width="1600" height="1000" alt="Scatter plot of Previous CGPA against Final CGPA" loading="lazy" decoding="async"></span></button><figcaption>8. Previous CGPA vs final<span>The strongest pair in the table. Correlation 0.8789.</span></figcaption></figure>
+    <figure class="shot" data-cat="charts" data-full="screenshots/09-scatter-study-hours.png"><button type="button" aria-label="Enlarge study-hours scatter"><span class="thumb"><img src="screenshots/09-scatter-study-hours.png" width="1600" height="1000" alt="Scatter plot of study hours per day against Final CGPA" loading="lazy" decoding="async"></span></button><figcaption>9. Study hours vs final<span>A moderate upward slope. Correlation 0.2309.</span></figcaption></figure>
+    <figure class="shot" data-cat="charts" data-full="screenshots/10-scatter-attendance.png"><button type="button" aria-label="Enlarge attendance scatter"><span class="thumb"><img src="screenshots/10-scatter-attendance.png" width="1600" height="1000" alt="Scatter plot of attendance percentage against Final CGPA" loading="lazy" decoding="async"></span></button><figcaption>10. Attendance vs final<span>A moderate upward slope. Correlation 0.3028.</span></figcaption></figure>
+    <figure class="shot" data-cat="fit" data-full="screenshots/11-fit-code.png"><button type="button" aria-label="Enlarge fitting code"><span class="thumb"><img src="screenshots/11-fit-code.png" width="1600" height="1000" alt="Python code that fits linear regression and a random forest" loading="lazy" decoding="async"></span></button><figcaption>11. Fitting the two models<span>The same 80/20 split, then LinearRegression and a 100-tree forest.</span></figcaption></figure>
+    <figure class="shot" data-cat="fit" data-full="screenshots/12-learned-equation.png"><button type="button" aria-label="Enlarge the learned equation"><span class="thumb"><img src="screenshots/12-learned-equation.png" width="1600" height="1000" alt="The fitted multiple linear regression equation" loading="lazy" decoding="async"></span></button><figcaption>12. Learned equation<span>Previous CGPA’s coefficient is 0.9262; sleep and social hours are tiny.</span></figcaption></figure>
+    <figure class="shot" data-cat="fit" data-full="screenshots/13-evaluation-metrics.png"><button type="button" aria-label="Enlarge test metrics"><span class="thumb"><img src="screenshots/13-evaluation-metrics.png" width="1600" height="1000" alt="Test-set MSE, RMSE, MAE and R-squared for both models" loading="lazy" decoding="async"></span></button><figcaption>13. Test metrics<span>The forest is ahead: R² 0.9431 against 0.9093.</span></figcaption></figure>
+    <figure class="shot" data-cat="fit" data-full="screenshots/14-predictions-head.png"><button type="button" aria-label="Enlarge first predictions"><span class="thumb"><img src="screenshots/14-predictions-head.png" width="1600" height="1000" alt="First ten actual and predicted Final CGPA values" loading="lazy" decoding="async"></span></button><figcaption>14. First ten predictions<span>The forest is usually closer on these ten test rows.</span></figcaption></figure>
+    <figure class="shot" data-cat="charts" data-full="screenshots/15-coefficients.png"><button type="button" aria-label="Enlarge linear coefficients"><span class="thumb"><img src="screenshots/15-coefficients.png" width="1600" height="1000" alt="Bar chart of the five linear-regression coefficients" loading="lazy" decoding="async"></span></button><figcaption>15. Linear coefficients<span>Previous CGPA at 0.926; the other four bars are much smaller.</span></figcaption></figure>
+    <figure class="shot" data-cat="charts" data-full="screenshots/16-feature-importances.png"><button type="button" aria-label="Enlarge feature importances"><span class="thumb"><img src="screenshots/16-feature-importances.png" width="1600" height="1000" alt="Bar chart of random-forest feature importances" loading="lazy" decoding="async"></span></button><figcaption>16. Forest importances<span>Previous CGPA accounts for about four-fifths of the splits.</span></figcaption></figure>
+    <figure class="shot" data-cat="charts" data-full="screenshots/17-actual-vs-predicted-lr.png"><button type="button" aria-label="Enlarge actual vs predicted for linear regression"><span class="thumb"><img src="screenshots/17-actual-vs-predicted-lr.png" width="1600" height="1000" alt="Actual versus predicted scatter plot for linear regression" loading="lazy" decoding="async"></span></button><figcaption>17. Actual vs predicted — LR<span>Test points against the identity line. R² 0.9093.</span></figcaption></figure>
+    <figure class="shot" data-cat="charts" data-full="screenshots/18-actual-vs-predicted-rf.png"><button type="button" aria-label="Enlarge actual vs predicted for the random forest"><span class="thumb"><img src="screenshots/18-actual-vs-predicted-rf.png" width="1600" height="1000" alt="Actual versus predicted scatter plot for the random forest" loading="lazy" decoding="async"></span></button><figcaption>18. Actual vs predicted — RF<span>A tighter cloud around the identity line. R² 0.9431.</span></figcaption></figure>
+    <figure class="shot" data-cat="charts" data-full="screenshots/19-residuals-lr.png"><button type="button" aria-label="Enlarge residual plot for linear regression"><span class="thumb"><img src="screenshots/19-residuals-lr.png" width="1600" height="1000" alt="Residual plot for linear regression" loading="lazy" decoding="async"></span></button><figcaption>19. Residuals — LR<span>A fairly tight band around zero. Test RMSE 0.1613.</span></figcaption></figure>
+    <figure class="shot" data-cat="web" data-full="screenshots/20-website-home-dark.png"><button type="button" aria-label="Enlarge website home, dark theme"><span class="thumb"><img src="screenshots/20-website-home-dark.png" width="1600" height="1000" alt="Project website home, dark theme" loading="lazy" decoding="async"></span></button><figcaption>20. Website · dark<span>Home page, charcoal and mandarin dark theme.</span></figcaption></figure>
+    <figure class="shot" data-cat="web" data-full="screenshots/21-website-home-light.png"><button type="button" aria-label="Enlarge website home, light theme"><span class="thumb"><img src="screenshots/21-website-home-light.png" width="1600" height="1000" alt="Project website home, light theme" loading="lazy" decoding="async"></span></button><figcaption>21. Website · light<span>The same home page in the light theme.</span></figcaption></figure>
+    <figure class="shot" data-cat="web" data-full="screenshots/22-website-phone.png"><button type="button" aria-label="Enlarge website phone layout"><span class="thumb"><img src="screenshots/22-website-phone.png" width="1600" height="1000" alt="Project website on a 390-pixel-wide phone" loading="lazy" decoding="async"></span></button><figcaption>22. Website · phone<span>390-pixel-wide dark layout, stats visible.</span></figcaption></figure>
+    <figure class="shot" data-cat="web" data-full="screenshots/23-website-results.png"><button type="button" aria-label="Enlarge website results"><span class="thumb"><img src="screenshots/23-website-results.png" width="1600" height="1000" alt="Website results section, test metrics" loading="lazy" decoding="async"></span></button><figcaption>23. Website · results<span>Test metrics for both models.</span></figcaption></figure>
+    <figure class="shot" data-cat="web" data-full="screenshots/24-website-how-to-run.png"><button type="button" aria-label="Enlarge website how to run"><span class="thumb"><img src="screenshots/24-website-how-to-run.png" width="1600" height="1000" alt="Website how-to-run section" loading="lazy" decoding="async"></span></button><figcaption>24. Website · how to run<span>Create a virtualenv, install, and run src/predict_cgpa.py.</span></figcaption></figure>
+  </div>
+  <p id="no-results" class="empty" role="status">No matching screenshots.</p>
+</section>
+
+<section id="structure" class="wrap reveal">
+  <h2>Folder Structure</h2>
+  <pre class="tree"><code>CGPA_Prediction/
+├── notebooks/cgpa_prediction.ipynb
+├── src/predict_cgpa.py
+├── data/Student_data.csv
+├── results/                  metrics, coefficients, predictions, figures
+├── docs/                     written report, LaTeX source, assignment brief
+├── screenshots/              24 images, 1600×1000
+├── assets/                   website CSS, JS and favicon
+├── index.html
+├── requirements.txt
+├── LICENSE
+└── README.md</code></pre>
+</section>
+
+<section id="run" class="wrap reveal">
+  <h2>How to run</h2>
+  <p class="sub">Python 3, with the packages in <a href="requirements.txt">requirements.txt</a>. The CSV is already in <code>data/</code>.</p>
+  <h3>Linux / macOS</h3>
+  <div class="code-wrap">
+    <button class="copy" type="button">Copy</button>
+    <pre class="code"><code>git clone https://github.com/rohaan2802/CGPA_Prediction.git
+cd CGPA_Prediction
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python3 src/predict_cgpa.py</code></pre>
+  </div>
+  <h3>Windows</h3>
+  <div class="code-wrap">
+    <button class="copy" type="button">Copy</button>
+    <pre class="code"><code>python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+python src\predict_cgpa.py</code></pre>
+  </div>
+  <p>That prints the summary statistics, the correlations, the coefficients, the test metrics and the linear equation, and writes files under <code>results/</code>. Optional flags: <code>--data-dir</code>, <code>--results-dir</code> and <code>--no-plots</code>. The same steps are in <a href="notebooks/cgpa_prediction.ipynb">notebooks/<wbr>cgpa_prediction.ipynb</a>.</p>
+</section>
+
+<section id="license" class="wrap reveal">
+  <h2>License</h2>
+  <p>The code in this repository is under the <a href="LICENSE">MIT License</a>, Copyright (c) 2026 Mohammad Rohaan.</p>
+</section>
+</main>
+<footer class="footer">
+  <div class="wrap">
+    <p><strong>Mohammad Rohaan</strong> · 22I-2327</p>
+    <p><a href="LICENSE">MIT License</a> · <a href="https://github.com/rohaan2802">github.com/rohaan2802</a> · <a href="mailto:m.rohaanarshad@gmail.com">m.rohaanarshad@gmail.com</a></p>
+  </div>
+</footer>
+<button class="icon-btn to-top" id="to-top" tabindex="-1" type="button" aria-label="Back to top" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg></button>
+<div class="lb" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Screenshot viewer">
+  <button class="lb-btn close" type="button" aria-label="Close">×</button>
+  <button class="lb-btn prev" type="button" aria-label="Previous">‹</button>
+  <button class="lb-btn next" type="button" aria-label="Next">›</button>
+  <img alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" width="1600" height="1000">
+  <p></p>
+  <a class="lb-original" href="#" target="_blank" rel="noopener">Open original</a>
+</div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

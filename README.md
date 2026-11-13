@@ -1,264 +1,460 @@
-# CGPA Prediction — Probability and Statistics Final Project (Sec-E)
+<div align="center">
 
-University **Final CGPA** is modeled from study habits and lifestyle using **exploratory statistics**, a **2×2 scatter grid**, **multiple linear regression**, and a **Random Forest** regressor (100 trees). The report is a **LaTeX** article; the code is a Colab-exported `.py` plus a Jupyter notebook on GitHub. Dataset: **5,000** students from a public Kaggle table.
+# CGPA Prediction — Study Habits and Prior Grades
 
-**Author:** Mohammad Rohaan · **22I-2327** · Section **E** · [rohaan2802](https://github.com/rohaan2802)
+**Two models that predict a student's final CGPA from study hours, attendance, sleep, social hours, and previous CGPA.**
 
-There are **no named hypothesis tests** (no t-test, ANOVA, or χ²) in `Python_Files_i222327_e_finalproject_prob&stat.py` or `Latex_SourceFile_main.tex`. Inference in the submitted work is **summary statistics, plots, and test-set MSE / R²**. The project-description PDF (`Proability &  Statistics Project.pdf`) is in the tree; this README follows the **implemented** Python and LaTeX.
+[![Python](https://img.shields.io/badge/Python-3-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://github.com/rohaan2802/CGPA_Prediction)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-LinearRegression%20%2B%20RandomForest-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white)](https://github.com/rohaan2802/CGPA_Prediction)
+[![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-F37626?style=for-the-badge&logo=jupyter&logoColor=white)](https://github.com/rohaan2802/CGPA_Prediction)
+[![Repo Size](https://img.shields.io/github/repo-size/rohaan2802/CGPA_Prediction?style=for-the-badge)](https://github.com/rohaan2802/CGPA_Prediction)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
-## Table of contents
+**Mohammad Rohaan** · 22I-2327
 
-- [Problem statement / academic context](#problem-statement--academic-context)
-- [Features](#features)
-- [Architecture / design](#architecture--design)
-- [Algorithms and data structures](#algorithms-and-data-structures)
-- [File-by-file reference](#file-by-file-reference)
-- [Data formats / schemas](#data-formats--schemas)
-- [Tech stack](#tech-stack)
-- [Project structure](#project-structure)
-- [Prerequisites and install](#prerequisites-and-install)
-- [How to build and run](#how-to-build-and-run)
-- [Usage walkthrough](#usage-walkthrough)
-- [Configuration / constants](#configuration--constants)
-- [Results / metrics](#results--metrics)
-- [Controls / CLI](#controls--cli)
-- [Known limitations / bugs](#known-limitations--bugs)
-- [How to extend](#how-to-extend)
-- [Author](#author)
+</div>
 
-## Problem statement / academic context
+---
 
-**Research question (as implemented):** which of study hours, attendance, sleep, social time, and previous CGPA associate with **Final CGPA**, and can OLS or a tree ensemble predict held-out students?
+## Live Links
 
-LaTeX title: *Probability and Statistics Project: CGPA Prediction*. Literature bullets cite Smith et al. (2018) on study habits, Johnson (2020) on sleep, Zhao et al. (2021) on regression for GPA, White and Brown (2017) on social media — as written in `main.tex`, not re-checked against journals.
+| What | Link |
+|------|------|
+| Repository | [https://github.com/rohaan2802/CGPA_Prediction](https://github.com/rohaan2802/CGPA_Prediction) |
+| Website | [https://rohaan2802.github.io/CGPA_Prediction/](https://rohaan2802.github.io/CGPA_Prediction/) |
+| Download ZIP | [https://github.com/rohaan2802/CGPA_Prediction/archive/refs/heads/main.zip](https://github.com/rohaan2802/CGPA_Prediction/archive/refs/heads/main.zip) |
 
-**Dependent variable:** `Final_CGPA`  
-**Independent variables in both models:** `Study_Hours_Per_Day`, `Attendance_Pct`, `Sleep_Hours`, `Social_Hours_Week`, `Previous_CGPA`  
-CSV also has `Student_ID`, `Gender`, `Age`, `Major` (EDA / boxplots for Age; **not** in the regressors).
+---
 
-## Features
+## Table of Contents
 
-Mapped to the Python task headings:
+1. [Live Links](#live-links)
+2. [Overview](#overview)
+3. [What's Inside](#whats-inside)
+4. [The Data](#the-data)
+5. [How the Models Are Fitted](#how-the-models-are-fitted)
+6. [Test Results](#test-results)
+7. [Learned Equation](#learned-equation)
+8. [What the Residuals Show](#what-the-residuals-show)
+9. [Training and Test Files](#training-and-test-files)
+10. [Folder Structure](#folder-structure)
+11. [How to Use This Repository](#how-to-use-this-repository)
+12. [Running the Fit](#running-the-fit)
+13. [Screenshots](#screenshots)
+14. [License](#license)
+15. [Author](#author)
 
-| Task | Spec in the `.py` | Implementation |
-|------|-------------------|----------------|
-| 01 | Collect dependent CGPA and listed independents from an authentic source | `pd.read_csv` from Google Drive; Kaggle URL in the header |
-| 02 | Mean, median, mode, quartiles | `df.describe()` + `df.mode().iloc[0]` |
-| 03 | Box-and-whisker plots, identify outliers | One seaborn `boxplot` of seven numeric columns, red flier markers |
-| 04 | Scatter plots on one grid; interpret each panel | 2×2: Study, Attendance, Sleep, Social **vs Final_CGPA** (Previous CGPA is **not** on this grid) |
-| 05 | ≥ five independents, ≥ 50 observations; two models | n = 5000; MLR + `RandomForestRegressor` |
-| Conclusion | Compare predictions with originals using graphs and MSE | Prints MSE/R² twice and if-statements for the winner; **no actual-vs-pred plot** in the `.py` |
+---
 
-Techniques listed in the notebook header: *Multiple Linear Regression, Data Cleaning, Data Visualization (Box Plot, Scatter Plot), Model Evaluation (MSE)*. The script never calls `dropna`/`fillna`; the CSV has **0** missing cells.
+## Overview
 
-## Architecture / design
+This is a Probability & Statistics project. I wanted to see how well I could predict a student's final CGPA from a short list of academic and lifestyle numbers: study hours per day, attendance, sleep, social hours in the week, and the CGPA they already had.
+
+The table is a public Kaggle set — 5,000 university students, ten columns, no missing cells. Gender, age and major are in the file as well, and I summarised them, but they are not inputs to either model. The five predictors above, and `Final_CGPA` as the target, are what both fits use.
+
+I ran two models on the same 4,000 / 1,000 split (`test_size=0.2`, `random_state=42`):
+
+- Multiple linear regression, through `sklearn.linear_model.LinearRegression` (ordinary least squares, intercept on, no scaling).
+- A random forest, through `sklearn.ensemble.RandomForestRegressor` with 100 trees and `random_state=42`.
+
+I re-ran the work from [src/predict_cgpa.py](src/predict_cgpa.py). Linear regression came back with exactly the numbers the original notebook printed: test MSE 0.02601314 and R² 0.90928834. The forest is ahead of that — MSE 0.01632421, R² 0.94307506 — close to the notebook's 0.01634155 and 0.94301461. I take the small gap as a scikit-learn version difference; the story is the same either way. Previous CGPA does most of the work (Pearson correlation 0.8789 with the target, and a linear coefficient of 0.9262). Sleep and social hours barely move the needle.
+
+The raw numbers from that run are under [results/](results/). The written report I submitted, and its LaTeX source, are under [docs/](docs/).
+
+---
+
+## What's Inside
+
+| Section | Path | What's there |
+|---------|------|----------------|
+| Notebook | [notebooks/cgpa_prediction.ipynb](notebooks/cgpa_prediction.ipynb) | The cleaned walkthrough: load the table, print statistics, correlations and outliers, fit both models, print the metrics and the equation, and plot the charts |
+| Script | [src/predict_cgpa.py](src/predict_cgpa.py) | The same two fits, runnable from the command line. It prints the report and writes the files under `results/` |
+| Data | [data/Student_data.csv](data/Student_data.csv) | The 5,000-row table, included in the repository. Source notes are in [data/README.md](data/README.md) |
+| Results | [results/](results/) | `metrics.csv`, `coefficients.csv`, `feature_importances.csv`, `predictions_head.csv`, the other tables, and the figures |
+| Report | [docs/report/CGPA_Prediction_Report.pdf](docs/report/CGPA_Prediction_Report.pdf) | The written report (LaTeX source in [docs/latex/main.tex](docs/latex/main.tex)) |
+| Screenshots | [screenshots/](screenshots/) | 24 images, all 1600×1000, covering the data, the fits, the charts and the website |
+| Website | [index.html](index.html) | The GitHub Pages site for this repo (charcoal and mandarin, dark and light) |
+| Dependencies | [requirements.txt](requirements.txt) | pandas, numpy, matplotlib, seaborn, scikit-learn |
+
+---
+
+## The Data
+
+`Student_data.csv` has 5,000 rows and 10 columns. Every cell is filled, and every `Student_ID` is unique. I took the file from the original project folder; the notebook and the report both name this Kaggle source:
+
+https://www.kaggle.com/datasets/robiulhasanjisan/university-student-performance-and-habits-dataset
+
+| Column | Role | What I actually saw |
+|--------|------|---------------------|
+| `Student_ID` | Identifier | 5,000 distinct values, `ID00001` through `ID05000` |
+| `Gender` | Collected, not used in the models | Male 2,748; Female 2,252 |
+| `Age` | Collected, not used in the models | Integers 18–24, mean 20.95 |
+| `Major` | Collected, not used in the models | Six majors; Psychology is the most common (869), then Mathematics (859), Business (843), Economics (835), Engineering (799), Computer Science (795) |
+| `Attendance_Pct` | Predictor | 26.2 to 100, mean 83.80. Mode is 100 (779 students) |
+| `Study_Hours_Per_Day` | Predictor | 0.1 to 14, mean 4.52 |
+| `Previous_CGPA` | Predictor | 1.35 to 4.00, mean 3.09 |
+| `Sleep_Hours` | Predictor | 4.0 to 10.0, mean 7.01 |
+| `Social_Hours_Week` | Predictor | 0 to 20, mean 8.01. Mode is 8 (722 students) |
+| `Final_CGPA` | Target | 1.16 to 4.00, mean 3.27. Mode is 4.00 (510 students) |
+
+Summary of the numeric columns (rounded):
+
+| Column | Mean | Std | Min | Q1 | Median | Q3 | Max | Mode (count) |
+|--------|-----:|----:|----:|---:|-------:|---:|----:|-------------:|
+| Age | 20.9486 | 2.0174 | 18 | 19 | 21 | 23 | 24 | 19 (765) |
+| Attendance_Pct | 83.7957 | 12.8679 | 26.2 | 75.1 | 85.05 | 94.8 | 100 | 100 (779) |
+| Study_Hours_Per_Day | 4.5178 | 2.5681 | 0.1 | 2.6 | 4.0 | 6.0 | 14 | 2.9 (108) |
+| Previous_CGPA | 3.0938 | 0.4768 | 1.35 | 2.76 | 3.10 | 3.43 | 4.00 | 4.00 (172) |
+| Sleep_Hours | 7.0121 | 1.4244 | 4.0 | 6.0 | 7.0 | 8.0 | 10.0 | 7.4 (153) |
+| Social_Hours_Week | 8.0064 | 2.7978 | 0 | 6 | 8 | 10 | 20 | 8 (722) |
+| Final_CGPA | 3.2722 | 0.5080 | 1.16 | 2.92 | 3.31 | 3.68 | 4.00 | 4.00 (510) |
+
+Pearson correlations with `Final_CGPA`:
+
+| Column | corr(Final_CGPA) |
+|--------|-----------------:|
+| Previous_CGPA | **0.8789** |
+| Attendance_Pct | 0.3028 |
+| Study_Hours_Per_Day | 0.2309 |
+| Sleep_Hours | 0.0026 |
+| Social_Hours_Week | −0.0049 |
+| Age | −0.0122 |
+
+Previous CGPA is in a league of its own. Attendance and study hours are moderate. Sleep, social hours and age are essentially uncorrelated with the target — I still left sleep and social hours in the models, because that is how the original notebook was written, but I would not read a lifestyle story into those two coefficients.
+
+Tukey IQR outliers (1.5 × IQR fences), which I counted and then left in, the same as the original notebook:
+
+| Column | Outliers | Share |
+|--------|--------:|------:|
+| Age | 0 | 0% |
+| Attendance_Pct | 24 | 0.48% |
+| Study_Hours_Per_Day | 97 | 1.94% |
+| Previous_CGPA | 11 | 0.22% |
+| Sleep_Hours | 0 | 0% |
+| Social_Hours_Week | 21 | 0.42% |
+| Final_CGPA | 17 | 0.34% |
+
+The study-hours tail is the largest: anything above 11.1 hours is flagged, up to a recorded 14.
+
+---
+
+## How the Models Are Fitted
+
+The work is in [src/predict_cgpa.py](src/predict_cgpa.py) and in the notebook. The steps are the same in both:
+
+1. Read `data/Student_data.csv`. If the file is missing, the script stops with a short message that points at [data/README.md](data/README.md).
+2. Print the shape, the gender and major counts, the summary statistics (mean, median, mode, quartiles), the Pearson correlations, and the Tukey outlier counts.
+3. Split the 5,000 rows into 4,000 for training and 1,000 for testing (`train_test_split`, `test_size=0.2`, `random_state=42`).
+4. Fit `LinearRegression()` on the five predictors, predict on the test set, and compute MSE, RMSE, MAE and R².
+5. Fit `RandomForestRegressor(n_estimators=100, random_state=42)` on the same split, and compute the same metrics plus feature importances.
+6. Print the intercept, the five coefficients, the linear equation, and the first ten test predictions. Write the tables and charts under `results/`.
+
+Neither model standardises the inputs. I did not drop outliers, add interactions, or tune the forest. The point of the exercise is this comparison, on the same split the original notebook used.
+
+The linear model is:
 
 ```
-Student_data.csv (5000 × 10)
-        │
-   describe + mode; boxplots; 2×2 scatters
-        │
-   X = 5 numeric habits/GPA, y = Final_CGPA
-        │
-   train_test_split(0.2, random_state=42)  →  4000 / 1000
-        │
-   LinearRegression ──► MSE, R²
-   RandomForestRegressor(100, seed=42) ──► MSE, R²
-        │
-   print which model has lower MSE / higher R²
+Final_CGPA = β0 + β1·Study_Hours_Per_Day + β2·Attendance_Pct
+           + β3·Sleep_Hours + β4·Social_Hours_Week + β5·Previous_CGPA
 ```
 
-LaTeX writes the OLS equation
+---
 
-\[
-\text{Final CGPA} = \beta_0 + \beta_1(\text{study}) + \beta_2(\text{attendance}) + \beta_3(\text{sleep}) + \beta_4(\text{social}) + \beta_5(\text{previous CGPA})
-\]
+## Test Results
 
-Coefficients are **not printed** in the Python file (no `coef_` / intercept dump).
+Test set, 1,000 rows. The linear-regression figures below match the original notebook exactly. The random-forest figures are from my re-run (scikit-learn 1.9.1); the notebook had MSE 0.01634155 and R² 0.94301461, which is the same conclusion to four decimal places on R².
 
-## Algorithms and data structures
+| Model | MSE | RMSE | MAE | R² |
+|-------|----:|-----:|----:|---:|
+| Linear Regression | 0.02601314 | 0.16128589 | 0.13021230 | 0.90928834 |
+| **Random Forest** | **0.01632421** | **0.12776624** | **0.10311690** | **0.94307506** |
 
-- **OLS:** sklearn `LinearRegression` (closed-form, intercept on).
-- **Random Forest:** `RandomForestRegressor(n_estimators=100, random_state=42)` — default `max_depth=None`, MSE splitting.
-- **Metrics:** `mean_squared_error`, `r2_score` on the **same** test split.
-- **Plots:** seaborn `whitegrid`; boxplot `figsize=(18, 10)`, `palette="Set2"`, `flierprops` red circles size 12; scatters `figsize=(15, 10)`.
+The forest is ahead on every test metric. On the training set the picture is a little less tidy: linear regression is consistent (train R² 0.9022, test 0.9093), while the forest is nearly perfect on the training rows (R² 0.9906, MSE 0.002347) and drops to 0.9431 on the test set. It is over-fitting a bit, but it still wins on held-out data.
 
-Pearson correlations below are computed from `Probability_Proj_DataSet_Student_data.csv` (the file `describe()` would summarize). They are **not** printed by the `.py`.
+Random-forest feature importances:
 
-## File-by-file reference
+| Feature | Importance |
+|---------|-----------:|
+| Previous_CGPA | **0.7961** |
+| Attendance_Pct | 0.1080 |
+| Study_Hours_Per_Day | 0.0692 |
+| Sleep_Hours | 0.0159 |
+| Social_Hours_Week | 0.0108 |
 
-| File | Description |
-|------|-------------|
-| `Python_Files_i222327_e_finalproject_prob&stat.py` | Colab export of the notebook. |
-| `Python Files/i222327_E_FinalProject_Prob&Stat.ipynb` | Same project as a notebook (GitHub). |
-| `Probability_Proj_DataSet_Student_data.csv` | Local CSV copy (5,000 rows). |
-| `Probability_Proj_DataSet/Student_data.csv` | Same table in the zip folder. |
-| `Latex_SourceFile_main.tex` / `Latex_SourceFile/main.tex` | Report source. |
-| `PDF Document/i222327_E_FinalProject_Prob_Stat.pdf` | Compiled report. |
-| `Project Description/Proability &  Statistics Project.pdf` | Course brief (filename typo “Proability”). |
+Previous CGPA accounts for about four-fifths of the forest's splits. That matches the 0.8789 correlation and the 0.9262 linear coefficient.
 
-## Data formats / schemas
+First ten test rows, actual vs predicted (four decimal places):
 
-Header (exact):
+| Student | Actual | Pred. LR | Pred. RF | Err. LR | Err. RF |
+|---------|-------:|---------:|---------:|--------:|--------:|
+| ID01502 | 3.1100 | 3.0939 | 3.0874 | −0.0161 | −0.0226 |
+| ID02587 | 3.7000 | 3.5330 | 3.6802 | −0.1670 | −0.0198 |
+| ID02654 | 2.9300 | 2.8024 | 2.8503 | −0.1276 | −0.0797 |
+| ID01056 | 2.6700 | 2.4309 | 2.4456 | −0.2391 | −0.2244 |
+| ID00706 | 3.6900 | 3.4348 | 3.4207 | −0.2552 | −0.2693 |
+| ID00107 | 3.6800 | 3.6198 | 3.7177 | −0.0602 | 0.0377 |
+| ID00590 | 3.5400 | 3.4789 | 3.4800 | −0.0611 | −0.0600 |
+| ID02469 | 3.2700 | 3.0897 | 3.2444 | −0.1803 | −0.0256 |
+| ID02414 | 3.9000 | 3.8490 | 3.9276 | −0.0510 | 0.0276 |
+| ID01601 | 2.7600 | 2.7725 | 2.8353 | 0.0125 | 0.0753 |
 
-```text
-Student_ID,Gender,Age,Major,Attendance_Pct,Study_Hours_Per_Day,Previous_CGPA,Sleep_Hours,Social_Hours_Week,Final_CGPA
+On these ten rows the forest is usually closer. ID00706 is a miss for both (actual 3.69, predictions around 3.43). The largest absolute test error I saw across the full 1,000 rows is 0.6372 for linear regression and 0.6179 for the forest. Full-precision tables are in [results/metrics.csv](results/metrics.csv) and [results/predictions.csv](results/predictions.csv).
+
+The original report recorded the notebook's random-forest numbers (MSE 0.01634155, R² 0.94301461) and reached the same conclusion: the forest is the better of the two on this test set.
+
+---
+
+## Learned Equation
+
+Coefficients rounded to six decimal places, as the script prints them:
+
+```
+Final_CGPA = -0.678843
+           + 0.045074×Study_Hours_Per_Day
+           + 0.010971×Attendance_Pct
+           − 0.000971×Sleep_Hours
+           − 0.003800×Social_Hours_Week
+           + 0.926166×Previous_CGPA
 ```
 
-Source stated in code and tex: [Kaggle — University Student Performance and Habits](https://www.kaggle.com/datasets/robiulhasanjisan/university-student-performance-and-habits-dataset).
+A few things worth pointing at:
 
-**Counts:** 5,000 rows, **0** nulls. `Gender`: Male **2748**, Female **2252**. `Major`: Psychology 869, Mathematics 859, Business 843, Economics 835, Engineering 799, Computer Science 795.
+- Previous CGPA carries almost all of the linear fit: holding the other four variables fixed, a one-point difference in previous CGPA maps to about 0.93 points of final CGPA.
+- Study hours: about +0.045 CGPA points per extra hour per day.
+- Attendance: about +0.011 per percentage point of classes attended.
+- Sleep (−0.000971) and social hours (−0.003800) are tiny, and slightly negative. Given how close their correlations are to zero, I would not treat those signs as a finding.
 
-**Numeric summary (from the CSV; matches what `df.describe()` reports):**
+The intercept is −0.678843. The raw coefficients are in [results/coefficients.csv](results/coefficients.csv).
 
-| Column | Mean | Std | Min | ~Q1 | Median | ~Q3 | Max | Mode (`df.mode`) |
-|--------|------|-----|-----|-----|--------|-----|-----|------------------|
-| Age | 20.949 | 2.017 | 18 | 19 | 21 | 23 | 24 | 19 |
-| Attendance_Pct | 83.796 | 12.868 | 26.2 | 75.1 | 85.1 | 94.8 | 100 | 100 |
-| Study_Hours_Per_Day | 4.518 | 2.568 | 0.1 | 2.6 | 4.0 | 6.0 | 14 | 2.9 |
-| Previous_CGPA | 3.094 | 0.477 | 1.35 | 2.76 | 3.10 | 3.43 | 4.0 | 4.0 |
-| Sleep_Hours | 7.012 | 1.424 | 4.0 | 6.0 | 7.0 | 8.0 | 10 | 7.4 |
-| Social_Hours_Week | 8.006 | 2.798 | 0 | 6 | 8 | 10 | 20 | 8 |
-| Final_CGPA | 3.272 | 0.508 | 1.16 | 2.92 | 3.31 | 3.68 | 4.0 | 4.0 |
+---
 
-Quartiles above use positional indices (`n//4`) for a compact README; use pandas `describe()` for the exact 25/75 percentiles.
+## What the Residuals Show
 
-**Pearson r with `Final_CGPA` (CSV):** Previous_CGPA **0.8789**, Attendance_Pct **0.3028**, Study_Hours_Per_Day **0.2309**, Age **−0.0122**, Sleep_Hours **0.0026**, Social_Hours_Week **−0.0049**. Prior GPA dominates; sleep and social time are essentially uncorrelated with the target in this table. That is why a linear model can still reach R² ≈ 0.91 without those two features doing much work.
+The residual plots (predicted value against actual minus predicted) are in the screenshots below, one for the linear model. They are a fairly tight band around zero — the scale of `Final_CGPA` is only about three points, and a test RMSE of 0.16 is small in that light. I do not see a strong curve the way I would if a straight line were the wrong shape entirely. The leftover error is real, just not dramatic.
 
-Sample row 1: `ID00001`, Male, 20, Engineering, attendance 83.9, study 4.4, previous 2.65, sleep 9.1, social 8, final **2.78**.
+The forest tightens that band further (test RMSE 0.1278). The assignment asked for a comparison of predicted and original values on a graph as well as by MSE; those actual-versus-predicted charts are in the screenshots and under [results/figures/](results/figures/).
 
-## Tech stack
+---
 
-- Python 3: pandas, matplotlib, seaborn, scikit-learn
-- Google Colab (`google.colab.drive`) in the shipped `.py`
-- LaTeX: `article`, `graphicx`, `amsmath`, `url`
+## Training and Test Files
 
-## Project structure
+The dataset is in this repository, at [data/Student_data.csv](data/Student_data.csv). The train/test cut is made in the script, not stored as a second pair of files.
+
+| File | Rows | Columns | Where it lives |
+|------|------|---------|----------------|
+| `Student_data.csv` | 5,000 | 10 | [data/Student_data.csv](data/Student_data.csv) |
+
+Source, as named in the original notebook and the report:
+
+https://www.kaggle.com/datasets/robiulhasanjisan/university-student-performance-and-habits-dataset
+
+A re-run of [src/predict_cgpa.py](src/predict_cgpa.py) on this file reproduces the linear-regression test metrics exactly, and the random-forest metrics to the precision discussed above.
+
+The written report is [docs/report/CGPA_Prediction_Report.pdf](docs/report/CGPA_Prediction_Report.pdf). The assignment brief that was already in the original project folder is at [docs/assignment/Probability_and_Statistics_Project.pdf](docs/assignment/Probability_and_Statistics_Project.pdf).
+
+---
+
+## Folder Structure
 
 ```
 CGPA_Prediction/
-├── Python Files/          # ipynb, .py, Colab PDF
-├── Probability_Proj_DataSet/Student_data.csv
-├── Latex_SourceFile/main.tex
-├── PDF Document/
-└── Project Description/
+├── notebooks/
+│   └── cgpa_prediction.ipynb
+├── src/
+│   └── predict_cgpa.py
+├── data/
+│   ├── Student_data.csv
+│   └── README.md
+├── results/
+│   ├── metrics.csv
+│   ├── coefficients.csv
+│   ├── feature_importances.csv
+│   ├── summary_stats.csv
+│   ├── correlations.csv
+│   ├── outliers.csv
+│   ├── equations.txt
+│   ├── predictions_head.csv
+│   ├── predictions.csv
+│   ├── README.txt
+│   └── figures/
+├── docs/
+│   ├── report/CGPA_Prediction_Report.pdf
+│   ├── latex/main.tex
+│   └── assignment/Probability_and_Statistics_Project.pdf
+├── screenshots/               (24 images, 1600×1000, used in this README)
+├── assets/
+│   ├── css/style.css
+│   ├── js/main.js
+│   └── favicon.svg
+├── index.html
+├── requirements.txt
+├── LICENSE
+├── .gitignore
+└── README.md
 ```
 
-Local flattened copies: `Python_Files_i222327_e_finalproject_prob&stat.py`, `Latex_SourceFile_main.tex`, `Probability_Proj_DataSet_Student_data.csv`.
+---
 
-## Prerequisites and install
+## How to Use This Repository
+
+1. **Browse** – this README and the [website](https://rohaan2802.github.io/CGPA_Prediction/) walk through the data, the two fits, the numbers and the charts.
+2. **Clone the repo:**
+   ```bash
+   git clone https://github.com/rohaan2802/CGPA_Prediction.git
+   cd CGPA_Prediction
+   ```
+   or download the [ZIP of main](https://github.com/rohaan2802/CGPA_Prediction/archive/refs/heads/main.zip).
+3. **Run the fit** – the commands are in the next section. The CSV is already in `data/`. The script prints the full report and writes `results/`.
+4. **Open the notebook** if you would rather step through the same work in Jupyter.
+
+---
+
+## Running the Fit
+
+Python 3, with the packages in [requirements.txt](requirements.txt).
+
+**Linux / macOS:**
 
 ```bash
-pip install pandas matplotlib seaborn scikit-learn jupyter
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python3 src/predict_cgpa.py
 ```
 
-LaTeX: a TeX distribution with `pdflatex` (or Overleaf). Packages: `graphicx`, `amsmath`, `url`.
+**Windows:**
 
-## How to build and run
-
-**Python (local).** The export still has:
-
-```python
-from google.colab import drive
-drive.mount('/content/drive')
-file_path = '/content/drive/MyDrive/Probability_DataSet/Student_data.csv'
+```bat
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+python src\predict_cgpa.py
 ```
 
-Replace that block with:
+That prints the summary statistics, the correlations, the outlier counts, the coefficients, the test metrics and the linear equation, and writes the files under `results/`. Optional flags: `--data-dir`, `--results-dir` and `--no-plots`.
 
-```python
-import pandas as pd
-df = pd.read_csv("Probability_Proj_DataSet_Student_data.csv")
-# or: Probability_Proj_DataSet/Student_data.csv
-```
-
-Then:
+To walk through the same steps in Jupyter:
 
 ```bash
-python Python_Files_i222327_e_finalproject_prob&stat.py
-# or
-jupyter notebook "Python Files/i222327_E_FinalProject_Prob&Stat.ipynb"
+jupyter notebook notebooks/cgpa_prediction.ipynb
 ```
 
-Run top to bottom so `df`, `mse`/`r2`, and `mse_rf`/`r2_rf` exist before the conclusion cell.
+---
 
-**LaTeX:**
+## Screenshots
 
-```bash
-cd Latex_SourceFile
-pdflatex main.tex
-pdflatex main.tex
-```
+Every image is 1600×1000. Click one to open it at full size.
 
-`\date{\today}` stamps the compile day. A prebuilt PDF is under `PDF Document/`.
+### 1. Repository Folder Structure
 
-## Usage walkthrough
+<p align="center"><img src="screenshots/01-repo-structure.png" alt="Repository folder structure" width="900"></p>
 
-1. Confirm 5,000 rows and the ten column names.
-2. Read `describe()` / mode; Age is 18–24, Final CGPA 1.16–4.00.
-3. Boxplots: red fliers mark univariate outliers (especially study hours up to 14 and attendance down to 26.2). The script does **not** print outlier counts.
-4. Scatter grid: expect a visible slope for study and attendance vs CGPA; sleep and social panels look like noise (r ≈ 0).
-5. Fit both models; copy MSE and R². Conclusion prints Random Forest as winner on both criteria given the LaTeX numbers.
-6. Compile the tex and check that the Results section matches the Python printout.
+### 2. The Problem
 
-## Configuration / constants
+<p align="center"><img src="screenshots/02-problem.png" alt="Predict Final CGPA from five student-habit variables" width="900"></p>
 
-| Item | Value |
-|------|-------|
-| n | 5000 |
-| Features in X | 5 (list above) |
-| `test_size` | 0.2 → 1000 test rows |
-| `random_state` | 42 (split and RF) |
-| RF trees | 100 |
-| Boxplot columns | Age, Attendance_Pct, Study_Hours_Per_Day, Previous_CGPA, Sleep_Hours, Social_Hours_Week, Final_CGPA |
-| Drive path (Colab) | `/content/drive/MyDrive/Probability_DataSet/Student_data.csv` |
+### 3. The Data Table
 
-## Results / metrics
+<p align="center"><img src="screenshots/03-data-schema.png" alt="Shape, columns and first rows of Student_data.csv" width="900"></p>
 
-**From `Latex_SourceFile_main.tex` (executed Python pasted into the report):**
+### 4. Summary Statistics
 
-| Model | MSE | R² |
-|-------|-----|-----|
-| Multiple linear regression | **0.026013138313700883** | **0.9092883364955272** |
-| Random Forest (100 trees) | **0.01634154564** | **0.9430146116411523** |
+<p align="center"><img src="screenshots/04-summary-statistics.png" alt="Mean, median, mode and quartiles of the numeric columns" width="900"></p>
 
-The tex states RF **outperforms** OLS on both metrics (~91% vs ~94% variance explained) and prefers Random Forest for this dataset. The `.py` conclusion uses:
+### 5. Correlations with Final CGPA
 
-```python
-if mse < mse_rf:  # Linear better on MSE
-    ...
-else:
-    print("The Random Forest model performed better with a lower Mean Squared Error (MSE).")
-```
+<p align="center"><img src="screenshots/05-correlations.png" alt="Pearson correlations of the numeric columns with Final CGPA" width="900"></p>
 
-With the LaTeX numbers, the `else` branch runs, and RF also wins the R² comparison.
+### 6. Outliers
 
-RMSE is not printed; \(\sqrt{0.026013}\approx 0.161\) CGPA points (OLS) and \(\sqrt{0.016342}\approx 0.128\) (RF) on the 0–4 scale.
+<p align="center"><img src="screenshots/06-outliers.png" alt="Tukey IQR outlier counts for each numeric column" width="900"></p>
 
-The script does **not** print feature importances or \(\beta\) values, so “which factor contributes most” in the Introduction is answered only indirectly by the CSV correlations (Previous_CGPA).
+### 7. Box Plots
 
-## Controls / CLI
+<p align="center"><img src="screenshots/07-boxplots.png" alt="Box plots of the seven numeric columns, one panel each" width="900"></p>
 
-No argparse. Colab Drive mount is the only environment hook.
+### 8. Previous CGPA vs Final CGPA
 
-## Known limitations / bugs
+<p align="center"><img src="screenshots/08-scatter-previous-cgpa.png" alt="Scatter plot of Previous CGPA against Final CGPA" width="900"></p>
 
-- **Colab-only I/O** until the `read_csv` path is changed.
-- Gender, Age, Major omitted from X (Age is plotted but not modeled).
-- Task 04 never scatters **Previous_CGPA vs Final_CGPA** (the strongest linear relationship).
-- Conclusion text promises graphs of predicted vs original; the `.py` has **prints only**.
-- No VIF, residual plots, or formal tests despite a probability/statistics course frame.
-- RF can overfit; there is no extra validation split.
-- Literature citations are not verified here.
-- Header lists “Data Cleaning” but the CSV is already complete.
+### 9. Study Hours vs Final CGPA
 
-## How to extend
+<p align="center"><img src="screenshots/09-scatter-study-hours.png" alt="Scatter plot of study hours per day against Final CGPA" width="900"></p>
 
-- Dummy-encode `Major`/`Gender`; add Previous_CGPA to the scatter grid.
-- `statsmodels.OLS` for coefficient tables, t-stats, and residual diagnostics (if the brief required tests).
-- Plot `y_test` vs `y_pred` / `y_pred_rf`.
-- Print `linear_model.coef_` and `rf_model.feature_importances_`.
+### 10. Attendance vs Final CGPA
+
+<p align="center"><img src="screenshots/10-scatter-attendance.png" alt="Scatter plot of attendance percentage against Final CGPA" width="900"></p>
+
+### 11. Fitting the Two Models
+
+<p align="center"><img src="screenshots/11-fit-code.png" alt="Python code that fits linear regression and a random forest" width="900"></p>
+
+### 12. Learned Equation
+
+<p align="center"><img src="screenshots/12-learned-equation.png" alt="The fitted multiple linear regression equation" width="900"></p>
+
+### 13. Test Metrics
+
+<p align="center"><img src="screenshots/13-evaluation-metrics.png" alt="Test-set MSE, RMSE, MAE and R-squared for both models" width="900"></p>
+
+### 14. First Ten Test Predictions
+
+<p align="center"><img src="screenshots/14-predictions-head.png" alt="First ten actual and predicted Final CGPA values" width="900"></p>
+
+### 15. Linear-Regression Coefficients
+
+<p align="center"><img src="screenshots/15-coefficients.png" alt="Bar chart of the five linear-regression coefficients" width="900"></p>
+
+### 16. Random-Forest Importances
+
+<p align="center"><img src="screenshots/16-feature-importances.png" alt="Bar chart of random-forest feature importances" width="900"></p>
+
+### 17. Actual vs Predicted — Linear Regression
+
+<p align="center"><img src="screenshots/17-actual-vs-predicted-lr.png" alt="Actual versus predicted scatter plot for linear regression" width="900"></p>
+
+### 18. Actual vs Predicted — Random Forest
+
+<p align="center"><img src="screenshots/18-actual-vs-predicted-rf.png" alt="Actual versus predicted scatter plot for the random forest" width="900"></p>
+
+### 19. Residuals — Linear Regression
+
+<p align="center"><img src="screenshots/19-residuals-lr.png" alt="Residual plot for linear regression" width="900"></p>
+
+### 20. Website Home, Dark Theme
+
+<p align="center"><img src="screenshots/20-website-home-dark.png" alt="Project website home, dark theme" width="900"></p>
+
+### 21. Website Home, Light Theme
+
+<p align="center"><img src="screenshots/21-website-home-light.png" alt="Project website home, light theme" width="900"></p>
+
+### 22. Website on a Phone
+
+<p align="center"><img src="screenshots/22-website-phone.png" alt="Project website on a 390-pixel-wide phone" width="900"></p>
+
+### 23. Website — Results
+
+<p align="center"><img src="screenshots/23-website-results.png" alt="Website results section, test metrics" width="900"></p>
+
+### 24. Website — How to Run
+
+<p align="center"><img src="screenshots/24-website-how-to-run.png" alt="Website how-to-run section" width="900"></p>
+
+---
+
+## License
+
+The code in this repository is under the [MIT License](LICENSE), Copyright (c) 2026 Mohammad Rohaan.
+
+The dataset was sourced from the Kaggle page named above. The assignment brief under `docs/assignment/` was already part of the original project folder.
+
+---
 
 ## Author
 
-**Mohammad Rohaan** — 22I-2327 · Sec-E · [rohaan2802](https://github.com/rohaan2802)
+**Mohammad Rohaan**
+22I-2327
+
+- GitHub: [@rohaan2802](https://github.com/rohaan2802)
+- Email: [m.rohaanarshad@gmail.com](mailto:m.rohaanarshad@gmail.com)

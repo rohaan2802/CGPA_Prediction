@@ -1,0 +1,1 @@
+Final_CGPA = -0.678843 + 0.045074*Study_Hours_Per_Day + 0.010971*Attendance_Pct - 0.000971*Sleep_Hours - 0.003800*Social_Hours_Week + 0.926166*Previous_CGPA
